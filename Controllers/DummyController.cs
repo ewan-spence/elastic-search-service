@@ -13,7 +13,7 @@ namespace ElasticSearchService.Controllers {
         private readonly HttpClient _httpClient;
 
         public DummyController(IHttpClientFactory httpClientFactory) {
-            _httpClient = httpClientFactory.CreateClient("DocsAPI");
+            _httpClient = httpClientFactory.CreateClient("ClientsEngine");
         }
 
         [HttpPost]

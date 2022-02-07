@@ -8,9 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ElasticSearchService.Commands {
-    public class ClientCommands : IClientCommands {
+    public class ClientsCommands : IClientsCommands {
         private readonly HttpClient _client;
         private readonly string _endpoint = "clients/documents";
+
+        public ClientsCommands(IHttpClientFactory httpClientFactory) {
+            _client = httpClientFactory.CreateClient("DocsAPI");
+        }
+
         public async Task AddDummyClients(int rotations) {
 
             var firstNames = GetFirstNames();
@@ -36,13 +41,30 @@ namespace ElasticSearchService.Commands {
             }
         }
 
+        public async Task DeleteClients(params string[] ids) {
+            var content = new StringContent(JsonConvert.SerializeObject(ids), Encoding.UTF8, "application/json");
+
+            var request = new HttpRequestMessage {
+                Content = content,
+                Method = HttpMethod.Delete
+            };
+
+            var response = await _client.SendAsync(request);
+
+            response.EnsureSuccessStatusCode();
+        }
+
         public async Task IndexClients(params Client[] clients) {
 
             var content = new StringContent(JsonConvert.SerializeObject(clients), Encoding.UTF8, "application/json");
-            var resposne = await _client.PostAsync(_endpoint, content);
-            Console.WriteLine(JsonConvert.SerializeObject(resposne));
+            var response = await _client.PostAsync(_endpoint, content);
+
+            response.EnsureSuccessStatusCode();
         }
 
+        public Task UpdateClients(params Client[] clients) {
+            throw new NotImplementedException();
+        }
 
         private List<string> GetFirstNames() {
             return new List<string>
@@ -99,12 +121,6 @@ namespace ElasticSearchService.Commands {
                 "Hart",
                 "Armstrong"
             };
-        }
-
-
-        public ClientCommands(IHttpClientFactory httpClientFactory) {
-
-            _client = httpClientFactory.CreateClient("DocsAPI");
         }
     }
 }

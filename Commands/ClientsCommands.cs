@@ -62,8 +62,11 @@ namespace ElasticSearchService.Commands {
             response.EnsureSuccessStatusCode();
         }
 
-        public Task UpdateClients(params Client[] clients) {
-            throw new NotImplementedException();
+        public async Task UpdateClients(params Client[] clients) {
+            var content = new StringContent(JsonConvert.SerializeObject(clients), Encoding.UTF8, "application/json");
+            var response = await _client.PatchAsync(_endpoint, content);
+
+            response.EnsureSuccessStatusCode();
         }
 
         private List<string> GetFirstNames() {

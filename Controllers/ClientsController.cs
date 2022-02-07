@@ -58,3 +58,4 @@ namespace ElasticSearchService.Controllers {
             }
         }
     }
+}

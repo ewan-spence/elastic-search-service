@@ -1,6 +1,7 @@
 ﻿using ElasticSearchService.Commands;
 using ElasticSearchService.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
 
@@ -9,9 +10,12 @@ namespace ElasticSearchService.Controllers {
     [ApiController]
     public class ClientsController : ControllerBase {
         private readonly IClientsCommands _commands;
+        private readonly string _searchKey;
 
-        public ClientsController(IClientsCommands commands) {
+        public ClientsController(IClientsCommands commands, IConfiguration config) {
             _commands = commands;
+
+            _searchKey = config.GetSection("Clients").GetValue<string>("SearchKey");
         }
 
         [HttpPost("dummy")]
@@ -23,6 +27,11 @@ namespace ElasticSearchService.Controllers {
             catch (Exception e) {
                 return StatusCode(500, e.Message);
             }
+        }
+
+        [HttpGet]
+        public IActionResult GetSearchAPIKey() {
+            return Ok(_searchKey);
         }
 
         [HttpPost]

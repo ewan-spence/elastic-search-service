@@ -1,9 +1,11 @@
 ﻿using ElasticSearchService.Entities;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,9 +13,14 @@ namespace ElasticSearchService.Commands {
     public class ClientsCommands : IClientsCommands {
         private readonly HttpClient _client;
         private readonly string _endpoint = "clients/documents";
+        private readonly string _privateKey;
 
-        public ClientsCommands(IHttpClientFactory httpClientFactory) {
+        public ClientsCommands(IHttpClientFactory httpClientFactory, IConfiguration config) {
             _client = httpClientFactory.CreateClient("DocsAPI");
+
+            _privateKey = config.GetSection("Clients").GetValue<string>("PrivateKey");
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _privateKey);
         }
 
         public async Task AddDummyClients(int rotations) {
@@ -46,7 +53,7 @@ namespace ElasticSearchService.Commands {
 
             var request = new HttpRequestMessage {
                 Content = content,
-                Method = HttpMethod.Delete
+                Method = HttpMethod.Delete,
             };
 
             var response = await _client.SendAsync(request);

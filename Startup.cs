@@ -1,3 +1,4 @@
+using ElasticSearchService.Commands;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,9 +28,9 @@ namespace ElasticSearchService {
             // Add the HttpClient set up to make authorized requests to the documents API
             services.AddHttpClient("DocsAPI", httpClient => {
                 httpClient.BaseAddress = new Uri(Configuration.GetConnectionString("DocumentsAPI"));
-
-                httpClient.DefaultRequestHeaders.Add(HeaderNames.Authorization, Configuration.GetValue<string>("AuthToken"));
             });
+
+            services.AddScoped<IClientsCommands, ClientsCommands>();
 
             services.AddControllers();
             services.AddSwaggerGen(c => {

@@ -1,5 +1,6 @@
 ﻿using ElasticSearchService.Entities;
 using ElasticSearchService.Helpers;
+using ElasticSearchService.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -80,7 +82,28 @@ namespace ElasticSearchService.Commands {
             response.EnsureSuccessStatusCode();
         }
 
+        public async Task<(List<Client>, int)> GetClients(int pageNumber, Client filter) {
+            var listEndpoint = _endpoint + "/list?page[current]=" + pageNumber.ToString();
 
+            var relevantClients = new List<Client>();
 
+            var response = await _client.GetAsync(listEndpoint);
+            response.EnsureSuccessStatusCode();
+
+            var responseContentString = await response.Content.ReadAsStringAsync();
+            var responseContentObject = JsonConvert.DeserializeObject<ListResponseObject<Client>>(responseContentString);
+
+            relevantClients.AddRange(responseContentObject.Results.Where(client => AnyEquals(client, filter)));
+
+            return (relevantClients, responseContentObject.Meta.Page.TotalPages);
+        }
+
+        // Return if any of the two client objects share a property value
+        private static bool AnyEquals(Client client1, Client client2) {
+            foreach (var prop in typeof(Client).GetProperties()) {
+                if (prop.GetValue(client1).Equals(prop.GetValue(client2))) return true;
+            }
+            return false;
+        }
     }
 }

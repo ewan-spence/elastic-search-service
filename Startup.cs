@@ -1,4 +1,5 @@
 using ElasticSearchService.Commands;
+using ElasticSearchService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +34,9 @@ namespace ElasticSearchService {
 
             services.AddScoped<IClientsCommands, ClientsCommands>();
             services.AddScoped<IPortfolioCommands, PortfolioCommands>();
+
+            services.AddScoped<IClientsService, ClientsService>();
+
             services.AddControllers();
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ElasticSearchService", Version = "v1" });

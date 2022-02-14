@@ -1,5 +1,7 @@
 ﻿using ElasticSearchService.Commands;
 using ElasticSearchService.Entities;
+using ElasticSearchService.Models;
+using ElasticSearchService.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -10,10 +12,13 @@ namespace ElasticSearchService.Controllers {
     [ApiController]
     public class ClientsController : ControllerBase {
         private readonly IClientsCommands _commands;
+        private readonly IClientsService _service;
+
         private readonly string _searchKey;
 
-        public ClientsController(IClientsCommands commands, IConfiguration config) {
+        public ClientsController(IClientsCommands commands, IClientsService service, IConfiguration config) {
             _commands = commands;
+            _service = service;
 
             _searchKey = config.GetSection("Clients").GetValue<string>("SearchKey");
         }
@@ -60,6 +65,17 @@ namespace ElasticSearchService.Controllers {
         public async Task<IActionResult> UpdateClients([FromBody] params Client[] clients) {
             try {
                 await _commands.UpdateClients(clients);
+                return Ok();
+            }
+            catch (Exception e) {
+                return StatusCode(500, e.Message);
+            }
+        }
+
+        [HttpPatch("updateByQuery")]
+        public async Task<IActionResult> UpdateClients([FromBody] UpdateQueryRequest updateQuery) {
+            try {
+                await _service.UpdateByQuery(updateQuery.Filter, updateQuery.Update);
                 return Ok();
             }
             catch (Exception e) {

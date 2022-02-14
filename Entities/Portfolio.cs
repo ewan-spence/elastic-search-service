@@ -13,7 +13,7 @@ namespace ElasticSearchService.Entities {
         [JsonProperty("advisor_name")]
         public string AdvisorName { get; set; }
         [JsonProperty("holdings")]
-        public List<string> Funds { get; set; }
+        public List<string> Holdings { get; set; }
         [JsonProperty("date_created")]
         public DateTime DateCreated { get; set; }
     }

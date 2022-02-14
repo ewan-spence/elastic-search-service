@@ -1,4 +1,5 @@
 using ElasticSearchService.Commands;
+using ElasticSearchService.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -31,12 +32,16 @@ namespace ElasticSearchService {
                 httpClient.BaseAddress = new Uri(Configuration.GetConnectionString("DocumentsAPI"));
             });
 
+            services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IClientsCommands, ClientsCommands>();
+            services.AddScoped<IClientQueries, ClientQueries>();
             services.AddScoped<IPortfolioCommands, PortfolioCommands>();
+            services.AddScoped<IPortfolioQueries, PortfolioQueries>();
             services.AddControllers();
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ElasticSearchService", Version = "v1" });
             });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

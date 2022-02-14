@@ -51,12 +51,12 @@ namespace ElasticSearchService.Commands {
                         ClientName = $"{firstNames.ElementAt(random.Next(0, firstNames.Count))} {lastNames.ElementAt(random.Next(0, lastNames.Count))}",
                         Id = Guid.NewGuid(),
                         DateCreated = DateTime.Now.AddDays(-random.Next(0, 10000)),
-                        Funds = new List<string>()
+                        Holdings = new List<string>()
                     };
                     for (int k = 0; k < random.Next(3, funds.Count); k++) {
                         var fund = funds.ElementAt(random.Next(0, funds.Count));
-                        while (DummyDataHelper.FundAlreadyIn(fund, portfolio.Funds)) fund = funds.ElementAt(random.Next(0, funds.Count));
-                        portfolio.Funds.Add(fund);
+                        while (DummyDataHelper.FundAlreadyIn(fund, portfolio.Holdings)) fund = funds.ElementAt(random.Next(0, funds.Count));
+                        portfolio.Holdings.Add(fund);
                     }
                     portfolios.Add(portfolio);
                 }

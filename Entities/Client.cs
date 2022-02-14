@@ -15,5 +15,7 @@ namespace ElasticSearchService.Entities {
         public DateTime DateOfBirth { get; set; }
         [JsonProperty("date_joined")]
         public DateTime DateJoined { get; set; }
+        [JsonProperty("service_type")]
+        public string ServiceType { get; set; }
     }
 }

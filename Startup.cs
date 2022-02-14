@@ -32,7 +32,7 @@ namespace ElasticSearchService {
             });
 
             services.AddScoped<IClientsCommands, ClientsCommands>();
-
+            services.AddScoped<IPortfolioCommands, PortfolioCommands>();
             services.AddControllers();
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ElasticSearchService", Version = "v1" });

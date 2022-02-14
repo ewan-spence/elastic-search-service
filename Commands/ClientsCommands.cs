@@ -1,4 +1,5 @@
 ﻿using ElasticSearchService.Entities;
+using ElasticSearchService.Helpers;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
@@ -25,13 +26,14 @@ namespace ElasticSearchService.Commands {
 
         public async Task AddDummyClients(int rotations) {
 
-            var firstNames = GetFirstNames();
-            var lastNames = GetLastNames();
+            var firstNames = DummyDataHelper.GetFirstNames();
+            var lastNames = DummyDataHelper.GetLastNames();
+            var serviceTypes = DummyDataHelper.GetServiceTypes();
             var random = new Random();
 
             for (int i = 0; i < rotations; i++) {
                 var clients = new List<Client>();
-                for (int j = 0; j < 50; j++) {
+                for (int j = 0; j < 100; j++) {
 
                     var first = firstNames.ElementAt(random.Next(0, firstNames.Count));
                     var last = lastNames.ElementAt(random.Next(0, lastNames.Count));
@@ -41,7 +43,8 @@ namespace ElasticSearchService.Commands {
                         FirstName = first,
                         LastName = last,
                         DateJoined = DateTime.Now.AddMinutes(-random.Next(0, 1000000)),
-                        DateOfBirth = DateTime.Now.AddDays(-random.Next(0, 366)).AddYears(-random.Next(20, 90))
+                        DateOfBirth = DateTime.Now.AddDays(-random.Next(0, 366)).AddYears(-random.Next(20, 90)),
+                        ServiceType = serviceTypes.ElementAt(random.Next(0, serviceTypes.Count))
                     });
                 }
                 await IndexClients(clients.ToArray());
@@ -77,61 +80,7 @@ namespace ElasticSearchService.Commands {
             response.EnsureSuccessStatusCode();
         }
 
-        private List<string> GetFirstNames() {
-            return new List<string>
-            {
-                "Ross",
-                "Ewan",
-                "Lewis",
-                "David",
-                "John",
-                "James",
-                "Michael",
-                "Paul",
-                "Mary",
-                "Emma",
-                "Lisa",
-                "Hollie",
-                "Frank",
-                "Louise",
-                "Gemma",
-                "Pauline",
-                "Claire",
-                "Chloe",
-                "Christopher",
-                "Luke",
-                "Jordan",
-                "Jamie",
-                "Nicole",
-                "Greg"
-            };
-        }
 
-        private List<string> GetLastNames() {
 
-            return new List<string>
-            {
-                "Lyons",
-                "Spence",
-                "McCarthy",
-                "Bain",
-                "Jack",
-                "Smith",
-                "Gordon",
-                "Halkett",
-                "Souttar",
-                "Boyle",
-                "McGregor",
-                "Davis",
-                "Kent",
-                "Johnston",
-                "Considine",
-                "Ferguson",
-                "Taylor",
-                "Forster",
-                "Hart",
-                "Armstrong"
-            };
-        }
     }
 }

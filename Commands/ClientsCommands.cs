@@ -57,7 +57,7 @@ namespace ElasticSearchService.Commands {
             var request = new HttpRequestMessage {
                 Content = content,
                 Method = HttpMethod.Delete,
-                RequestUri = new Uri(_endpoint)
+                RequestUri = new Uri(_client.BaseAddress, _endpoint)
             };
 
             var response = await _client.SendAsync(request);

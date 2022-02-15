@@ -18,7 +18,7 @@ namespace ElasticSearchService.Services {
         public async Task UpdateByQuery(Client filter, Client update) {
             // Temporary loop limit before first request
             var totalPages = int.MaxValue;
-            for (int pageNumber = 1; pageNumber < totalPages; pageNumber++) {
+            for (int pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
 
                 // Retreive relevant clients 
                 List<Client> filteredClients;
@@ -33,13 +33,20 @@ namespace ElasticSearchService.Services {
                     var client = filteredClients[index];
 
                     // Iterate through `update` properties and set non-null fields to `client`
-                    foreach (var prop in typeof(Client).GetProperties()) {
-                        if (prop.Name == "Id") continue;
+                    //foreach (var prop in typeof(Client).GetProperties()) {
+                    //    if (prop.Name == "Id") continue;
 
-                        if (prop.GetValue(update) != null) {
-                            prop.SetValue(client, prop.GetValue(update));
-                        }
-                    }
+                    //    if (prop.GetValue(update) != null) {
+                    //        prop.SetValue(client, prop.GetValue(update));
+                    //    }
+                    //}
+
+                    client.Name         = update.Name ?? ((update.FirstName ?? client.FirstName) + " " + (update.LastName ?? client.LastName));
+                    client.FirstName    = update.FirstName ?? client.FirstName;
+                    client.LastName     = update.LastName ?? client.LastName;
+                    client.DateOfBirth  = update.DateOfBirth ?? client.DateOfBirth;
+                    client.DateJoined   = update.DateJoined ?? client.DateJoined;
+                    client.ServiceType  = update.ServiceType ?? client.ServiceType;
 
                     // Append modified `client` object to the request body
                     patchList.SetValue(client, index);

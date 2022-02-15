@@ -1,10 +1,6 @@
 ﻿using ElasticSearchService.Commands;
 using ElasticSearchService.Entities;
-using ElasticSearchService.Models;
-using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace ElasticSearchService.Services {
@@ -15,7 +11,9 @@ namespace ElasticSearchService.Services {
             _commands = commands;
         }
 
-        public async Task UpdateByQuery(Client filter, Client update) {
+        public async Task<List<Client>> UpdateByQuery(Client filter, Client update) {
+            var totalPatched = new List<Client>();
+
             // Temporary loop limit before first request
             var totalPages = int.MaxValue;
             for (int pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
@@ -29,23 +27,26 @@ namespace ElasticSearchService.Services {
 
                 var patchList = new Client[filteredClients.Count];
 
-                for (int index = 0; index < filteredClients.Count; index++)  {
+                for (int index = 0; index < filteredClients.Count; index++) {
                     var client = filteredClients[index];
 
                     // Handle changes to properties
-                    client.Name         = update.Name ?? ((update.FirstName ?? client.FirstName) + " " + (update.LastName ?? client.LastName));
-                    client.FirstName    = update.FirstName ?? client.FirstName;
-                    client.LastName     = update.LastName ?? client.LastName;
-                    client.DateOfBirth  = update.DateOfBirth ?? client.DateOfBirth;
-                    client.DateJoined   = update.DateJoined ?? client.DateJoined;
-                    client.ServiceType  = update.ServiceType ?? client.ServiceType;
+                    client.Name = update.Name ?? ((update.FirstName ?? client.FirstName) + " " + (update.LastName ?? client.LastName));
+                    client.FirstName = update.FirstName ?? client.FirstName;
+                    client.LastName = update.LastName ?? client.LastName;
+                    client.DateOfBirth = update.DateOfBirth ?? client.DateOfBirth;
+                    client.DateJoined = update.DateJoined ?? client.DateJoined;
+                    client.ServiceType = update.ServiceType ?? client.ServiceType;
 
                     // Append modified `client` object to the request body
                     patchList.SetValue(client, index);
                 }
 
                 await _commands.UpdateClients(patchList);
+                totalPatched.AddRange(patchList);
             }
+
+            return totalPatched;
         }
     }
 }

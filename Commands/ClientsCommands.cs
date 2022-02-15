@@ -8,14 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ElasticSearchService.Commands {
     public class ClientsCommands : IClientsCommands {
         private readonly HttpClient _client;
-        private readonly string _endpoint = "clients/documents";
+        private readonly string _endpoint = "updates/documents";
         private readonly string _privateKey;
 
         public ClientsCommands(IHttpClientFactory httpClientFactory, IConfiguration config) {

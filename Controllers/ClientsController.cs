@@ -75,8 +75,8 @@ namespace ElasticSearchService.Controllers {
         [HttpPatch("updateByQuery")]
         public async Task<IActionResult> UpdateClients([FromBody] UpdateQueryRequest updateQuery) {
             try {
-                await _service.UpdateByQuery(updateQuery.Filter, updateQuery.Update);
-                return Ok();
+                var patched = await _service.UpdateByQuery(updateQuery.Filter, updateQuery.Update);
+                return Ok(patched);
             }
             catch (Exception e) {
                 return StatusCode(500, e.Message);

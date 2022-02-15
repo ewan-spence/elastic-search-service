@@ -32,15 +32,7 @@ namespace ElasticSearchService.Services {
                 for (int index = 0; index < filteredClients.Count; index++)  {
                     var client = filteredClients[index];
 
-                    // Iterate through `update` properties and set non-null fields to `client`
-                    //foreach (var prop in typeof(Client).GetProperties()) {
-                    //    if (prop.Name == "Id") continue;
-
-                    //    if (prop.GetValue(update) != null) {
-                    //        prop.SetValue(client, prop.GetValue(update));
-                    //    }
-                    //}
-
+                    // Handle changes to properties
                     client.Name         = update.Name ?? ((update.FirstName ?? client.FirstName) + " " + (update.LastName ?? client.LastName));
                     client.FirstName    = update.FirstName ?? client.FirstName;
                     client.LastName     = update.LastName ?? client.LastName;

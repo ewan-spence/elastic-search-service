@@ -93,17 +93,9 @@ namespace ElasticSearchService.Commands {
             var responseContentString = await response.Content.ReadAsStringAsync();
             var responseContentObject = JsonConvert.DeserializeObject<ListResponseObject<Client>>(responseContentString);
 
-            relevantClients.AddRange(responseContentObject.Results.Where(client => AnyEquals(client, filter)));
+            relevantClients.AddRange(responseContentObject.Results.Where(client => StaticHelpers.NonNullsEqual(client, filter)));
 
             return (relevantClients, responseContentObject.Meta.Page.TotalPages);
-        }
-
-        // Return if any of the two client objects share a property value
-        private static bool AnyEquals(Client client1, Client client2) {
-            foreach (var prop in typeof(Client).GetProperties()) {
-                if (prop.GetValue(client1).Equals(prop.GetValue(client2))) return true;
-            }
-            return false;
         }
     }
 }
